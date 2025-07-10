@@ -1,5 +1,5 @@
 import "./App.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 function App() {
   const [allCountries, setAllCountries] = useState([]);
@@ -21,23 +21,23 @@ function App() {
       .catch((error) => console.error("Error fetching data: ", error));
   }, []);
 
+  const handleSearch = useCallback((searchTerm) => {
+    const filteredCountries = allCountries.filter((country) =>
+      country.common.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setCountries(filteredCountries);
+  }, [allCountries]);
+
   useEffect(() => {
     if (!searchTerm || searchTerm === "") {
       setCountries(allCountries);
       return;
     }
     const timeout = setTimeout(() => {
-      handelSearch(searchTerm);
+      handleSearch(searchTerm);
     }, 1000);
     return () => clearTimeout(timeout);
-  }, [searchTerm]);
-
-  const handelSearch = (searchTerm) => {
-    const filteredCountries = allCountries.filter((country) =>
-      country.common.toLowerCase().includes(searchTerm)
-    );
-    setCountries(filteredCountries);
-  };
+  }, [searchTerm, allCountries, handleSearch]);
 
   return (
     <div className="App">
