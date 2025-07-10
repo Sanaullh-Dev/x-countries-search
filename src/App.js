@@ -1,24 +1,30 @@
 import "./App.css";
 import { useEffect, useState, useCallback } from "react";
 
+// API endpoint to fetch countries data
+const API_URL = "https://countries-search-data-prod-812920491762.asia-south1.run.app/countries";
+
 function App() {
   const [allCountries, setAllCountries] = useState([]);
   const [countries, setCountries] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // API endpoint to fetch countries data
-  const api =
-    "https://countries-search-data-prod-812920491762.asia-south1.run.app/countries?";
-
   // Fetch countries data from the API when the component mounts
   useEffect(() => {
-    fetch(api)
-      .then((response) => response.json())
+    fetch(API_URL)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         setCountries(data);
         setAllCountries(data);
       })
-      .catch((error) => console.error("Error fetching data: ", error));
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
   }, []);
 
   const handleSearch = useCallback((searchTerm) => {
